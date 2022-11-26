@@ -1,0 +1,16 @@
+[Unit]
+Description=Start CORSP server
+After=network.target
+
+[Service]
+Type=simple
+KillMode=control-group
+KillSignal=SIGTERM
+TimeoutStopSec=5min
+
+Environment=PORT=8080
+ExecStart=node {{ proxy_dir }}/server.js
+WorkingDirectory={{ proxy_dir }}
+
+[Install]
+WantedBy=default.target

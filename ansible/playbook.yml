@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: yes
+
+  vars:
+    home_dir: /root
+    proxy_dir: "{{ home_dir }}/corsp"
+
+  tasks:
+
+    - name: Install packages
+      apt:
+        update_cache: yes
+        pkg:
+          - git
+          - nginx
+          - nodejs
+          - npm
+
+    - name: Get proxy repo
+      shell: |
+        rm -fr {{ proxy_dir }}
+        git clone https://github.com/jihadichan/corsp {{ proxy_dir }}
+        cd {{ proxy_dir }} && npm install
+
+    - name: Render systemd unit
+      template:
+        src: proxy.service
+        dest: /usr/lib/systemd/system/proxy.service
+        owner: root
+        group: root
+        mode: 0644
+
+    - name: Restart proxy.service
+      systemd:
+        name: proxy
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
