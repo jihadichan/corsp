@@ -31,9 +31,22 @@
         group: root
         mode: 0644
 
+    - name: Set up nginx server
+      template:
+        src: ssproxy.de
+        dest: /etc/nginx/sites-available/ssproxy.de
+        owner: www-data
+        group: www-data
+        mode: 0644
+
     - name: Restart proxy.service
       systemd:
         name: proxy
         state: restarted
         enabled: yes
         daemon_reload: yes
+
+    - name: Restart nginx
+      systemd:
+        name: proxy
+        state: restarted
